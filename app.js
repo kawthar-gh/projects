@@ -23,6 +23,9 @@ app.use('/api/scategories', scategorieRouter);
 const articleRouter =require("./routes/article.route")
 app.use('/api/articles', articleRouter);
 
+const userRouter =require("./routes/user.route")
+app.use('/api/users', userRouter);
+
 //connexion to database
 mongoose.connect(process.env.DATABASECLOUD).then(()=>{
     console.log("DB connected")

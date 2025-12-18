@@ -24,7 +24,7 @@ const articleRouter =require("./routes/article.route")
 app.use('/api/articles', articleRouter);
 
 //connexion to database
-mongoose.connect(process.env.DATABASE).then(()=>{
+mongoose.connect(process.env.DATABASECLOUD).then(()=>{
     console.log("DB connected")
 }).catch((err)=>{
     console.log("DB connection error", err);

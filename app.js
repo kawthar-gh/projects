@@ -2,10 +2,14 @@ const express=require('express');
 const mongoose =require("mongoose")
 const dotenv =require('dotenv')
 const cors = require('cors')
+//const middleware = require('./middleware/verify-token')
 const app = express();
 
 //config dotenv
 dotenv.config();
+
+//static files
+app.use(express.static(__dirname + '/'));
 
 //les cors
 app.use(cors());
@@ -25,6 +29,7 @@ app.use('/api/articles', articleRouter);
 
 const userRouter =require("./routes/user.route")
 app.use('/api/users', userRouter);
+
 
 //connexion to database
 mongoose.connect(process.env.DATABASECLOUD).then(()=>{

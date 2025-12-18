@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const Article=require("../models/article")
 const Scategorie =require("../models/scategorie")
+const { uploadFile } = require('../middleware/uploadfile')
 
-
+/*
 // afficher la liste des articles.
 router.get('/', async (req, res, )=> {
 try {
@@ -13,10 +14,10 @@ res.status(200).json(articles);
 } catch (error) {
 res.status(404).json({ message: error.message });
 }
-});
+});  */
 
 // créer un nouvel article
-router.post('/', async (req, res) => {
+/*router.post('/', async (req, res) => {
 const nouvarticle = new Article(req.body)
 try {
 const response =await nouvarticle.save();
@@ -26,7 +27,47 @@ res.status(200).json(articles);
 } catch (error) {
 res.status(404).json({ message: error.message });
 }
-});
+});*/
+// créer un nouvel article avec image
+router.post(
+  '/',
+  uploadFile.single("imageart"),
+  async (req, res) => {
+    try {
+      const {
+        reference,
+        designation,
+        prix,
+        marque,
+        qtestock,
+        scategorieID
+      } = req.body;
+
+      const imageart = req.file ? req.file.filename : null;
+
+      const nouvarticle = new Article({
+        reference,
+        designation,
+        prix,
+        marque,
+        qtestock,
+        scategorieID,
+        imageart
+      });
+
+      await nouvarticle.save();
+
+      const article = await Article.findById(nouvarticle._id)
+        .populate("scategorieID")
+        .exec();
+
+      res.status(200).json(article);
+    } catch (error) {
+      res.status(404).json({ message: error.message });
+    }
+  }
+);
+
 
 // chercher un article
 router.get('/:articleId',async(req, res)=>{
@@ -113,5 +154,17 @@ res.status(200).json({articles:articles,tot:articlesTot});
 res.status(404).json({ message: error.message });
 }
 });
+
+const {verifyToken} =require("../middleware/verify-token")
+// afficher la liste des articles.
+router.get('/', verifyToken, async (req, res )=> {
+try {
+const articles = await Article.find();
+res.status(200).json(articles);
+} catch (error) {
+res.status(404).json({ message: error.message });
+}
+});
+
 
 module.exports = router;
